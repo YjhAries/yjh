@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 注意：这里的命名空间必须跟这个mapper文件对应的接口路径一致 -->
+<mapper namespace="com.yc.fresh.mapper.CartInfoMapper">
+	<select id="findByMno" parameterType="int" resultType="CartInfo">
+		select cno, gno, num from cartinfo
+	</select>
+	
+	<update id="update" parameterType="map">
+		update cartinfo set num = num + #{num} where cno=#{cno}
+	</update>
+	
+	<select id="finds" parameterType="int" resultType="CartInfo">
+		select cno, cf.gno, num, pics, price, gname, unit, weight from cartinfo cf, goodsinfo gf where cf.gno=gf.gno and mno=#{_parameter}
+	</select>
+	
+	<insert id="add" parameterType="CartInfo">
+		insert into cartinfo values(#{cno}, #{mno}, #{gno}, 1)
+	</insert>
+	
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+       	http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        https://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:property-placeholder location="classpath*:db.properties" />
+
+	<!-- 指定需要扫描的包路径，从指定路径开始往下扫描 -->
+	<context:component-scan base-package="com.yc.fresh">
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RequestMapping"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RequestParam"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ResponseBody"/>
+	</context:component-scan>
+	
+	<!-- 数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${driver}"></property>
+		<property name="jdbcUrl" value="${url}"></property>
+		<property name="user" value="${user}"></property>
+		<property name="password" value="${password}"></property>
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 配置数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		
+		<!-- 别名设置 : 指定需要启用别名的包路径-->
+		<property name="typeAliasesPackage" value="com.yc.fresh.entity"></property>
+		
+		<!-- mybatis映射文件路径 -->
+		<property name="mapperLocations" value="classpath*:mapper/*Mapper.xml"></property>
+	</bean>
+	
+	<!-- 配置mybatis映射文件跟接口自动映射 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- mapper文件对应的接口的包路径 -->
+		<property name="basePackage" value="com.yc.fresh.mapper"></property>
+		
+		<!-- 配置sqlSessionFactory 
+			注意：这个属性的类型是字符串，所以我们必须用value而不是ref
+		-->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 配置事务 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 需要开启事务的数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 启用事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 配置文件上传的参数 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+		<property name="maxUploadSize" value="1048576000"></property>
+		<property name="maxInMemorySize" value="4096"></property>
+	</bean>
+	
+	<!-- 邮件发送类 -->
+	<bean id="sendEmailUtil" class="com.yc.fresh.util.SendEmailUtil">
+		<property name="sendEmail" value="1293580602@qq.com"></property>
+		<property name="pwd" value="dihpepdwtahlgefh"></property>
+	</bean>
+</beans>

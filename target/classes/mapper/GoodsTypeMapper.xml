@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 注意：这里的命名空间必须跟这个mapper文件对应的接口路径一致 -->
+<mapper namespace="com.yc.fresh.mapper.GoodsTypeMapper">
+	<!-- id属性值必须跟这个接口中的方法名一致 -->
+	<select id="finds" resultType="GoodsType">
+		select tno, tname, pic, status from goodstype
+	</select>
+	
+	<insert id="add" parameterType="GoodsType">
+		insert into goodstype values(0, #{tname}, #{pic}, 1)
+	</insert>
+</mapper>
